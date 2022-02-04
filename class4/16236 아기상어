@@ -1,0 +1,71 @@
+from collections import deque
+from sys import stdin
+
+input = stdin.readline
+
+
+def findPrey(board, n, size, shark):
+    # 가장 가까운 먹이의 위치와 거리를 return
+
+    # 상좌우하순서 
+    dx = [0, -1, 1, 0]
+    dy = [1, 0, 0, -1]
+
+    visited = [[0 for _ in range(n)] for _ in range(n)]
+
+    q = deque()
+    q.append((shark[0], shark[1])) # 현재위치 방문
+    visited[shark[0]][shark[1]] = 1
+
+    eat = []
+    while q:
+        x, y = q.popleft()
+        # 모든 먹이에 대해 거리 계산
+        for d in range(4):
+            xx, yy = x+dx[d], y+dy[d]
+            if xx >= 0 and xx < n and yy >= 0 and yy < n:
+                if board[xx][yy] <= size and visited[xx][yy]==0:
+                    visited[xx][yy] = visited[x][y] + 1
+                    q.append((xx, yy))
+                if board[xx][yy] < size and board[xx][yy] > 0:
+                    eat.append((xx, yy, visited[xx][yy]-1))
+    
+    eat.sort(key=lambda x:(x[2],x[0],x[1]))
+    if eat:
+        return eat[0]
+    else:
+        return None
+
+
+
+n = int(input())
+board = [[0 for _ in range(n)] for _ in range(n)]
+for i in range(n):
+    board[i] = list(map(int, input().split()))
+# 입력 끝
+
+for i in range(n):
+    for j in range(n):
+        if board[i][j] == 9:
+            shark = (i, j)
+            board[i][j] = 0
+# 현재 상어의 위치
+size = 2    # 기본 사이즈 
+count = size # 먹이 먹은 수
+
+t = 0
+target = findPrey(board, n, size, shark)
+    
+while target:
+    t += target[2] # distance 더함
+    shark = (target[0], target[1])   # 이동
+    board[target[0]][target[1]] = 0 # 먹힘 ㅠㅠ 
+    count -= 1
+    if count == 0:
+        size += 1
+        count = size
+    target = findPrey(board, n, size, shark)
+    
+    
+
+print(t)
