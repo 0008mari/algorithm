@@ -1,24 +1,30 @@
-# 다익스트라 알고리즘
-# 출처: https://justkode.kr/algorithm/python-dijkstra
+# 1916 최소비용 구하기
+# (1) 다익스트라 이용하여 
 
 import sys
 import heapq
 
 INF = sys.maxsize
+input = sys.stdin.readline
 
-graph = {
-    'A': {'B': 8, 'C': 1, 'D': 2},
-    'B': {},
-    'C': {'B': 5, 'D': 2},
-    'D': {'E': 3, 'F': 5},
-    'E': {'F': 1},
-    'F': {'A': 5}
-}
+n = int(input())
+m = int(input())
+graph = {}
+for i in range(n+1):
+    graph[i] = {}
 
-n = 7   # 노드의 개수
+for _ in range(m):
+    start, end, cost = map(int, input().split())
+    if end in graph[start].keys():
+        # 이미 있으면 작은 경우에만 바꿈
+        if graph[start][end] > cost:
+            graph[start][end] = cost
+    else:
+        graph[start][end] = cost
+
+start, end = map(int, input().split())
+
 d = [INF] * (n+1)
-
-
 
 def dijkstra(graph, start):
     d[start] = 0
@@ -37,8 +43,10 @@ def dijkstra(graph, start):
             if tmp_d < d[new_dest]:
                 # 현재 최단거리보다 거쳐가는게 더 가까움.
                 d[new_dest] = tmp_d   # 최단거리 갱신
-                heapq.heappush(queue, [d, new_dest])
+                heapq.heappush(queue, [tmp_d, new_dest])
     
     return d
 
+dijkstra(graph, start)
 
+print(d[end])
