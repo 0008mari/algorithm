@@ -6,7 +6,7 @@ n = int(input())
 d = [0 for _ in range(n+1)]
 # list 인덱스와 n 맞춘다.
 
-for i in range(1, n+1):
+for i in range(2, n+1):
     d[i] = d[i-1] + 1
     if i%3 == 0:
         d[i] = min(d[i], d[i//3]+1)
